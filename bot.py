@@ -11,7 +11,7 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS Пользователи (
     id INTEGER PRIMARY KEY,
     name TEXT
 )''')
-conn.commit()
+
 
 @bot.message_handler(commands=["start"])
 def start(message):
@@ -36,5 +36,5 @@ def get_name(message):
     conn.commit()
 
     bot.send_message(message.chat.id, f"Отлично! Теперь ты зарегестрирован, {name}!")
-
+conn.commit()
 bot.polling(none_stop=True)
