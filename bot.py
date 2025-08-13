@@ -9,7 +9,8 @@ conn = sqlite3.connect('Пользователи.db', check_same_thread=False)
 cursor = conn.cursor()
 cursor.execute('''CREATE TABLE IF NOT EXISTS Пользователи (
     id INTEGER PRIMARY KEY,
-    name TEXT
+    name TEXT,
+    is_admin BOOLEAN DEFAULT FALSE
 )''')
 
 
@@ -17,7 +18,7 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS Пользователи (
 def start(message):
     user_id = message.from_user.id
 
-    cursor.execute('SELECT name FROM Пользователи WHERE id = ?',(user_id,))
+    cursor.execute('SELECT name, is_admin FROM Пользователи WHERE id = ?', (user_id,))
     result = cursor.fetchone()
 
     if result is None:
@@ -25,7 +26,11 @@ def start(message):
         bot.register_next_step_handler(message, get_name)
     else:
         name = result[0]
-        bot.send_message(message.chat.id, f"Привет, {name}!")
+        name, is_admin = result
+        if is_admin:
+            bot.send_message(message.chat.id, f"Привет, админ {name}!")
+        else:
+            bot.send_message(message.chat.id, f"Привет, {name}!")
 
 def get_name(message):
     user_id = message.from_user.id
